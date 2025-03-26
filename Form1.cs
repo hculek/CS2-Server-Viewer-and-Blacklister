@@ -1,6 +1,9 @@
 using CS_Server_Viewer.Components;
 using CS_Server_Viewer.Models;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+using System.Xml.Serialization;
 
 namespace CS_Server_Viewer
 {
@@ -95,7 +98,6 @@ namespace CS_Server_Viewer
             infoLabel.Text = StatusModel.Author;
             verLabel.Text = StatusModel.Licence;
             infoUrlLabel.Text = StatusModel.GitUrl;
-
         }
 
         private void SetStatus(string status)
@@ -133,6 +135,18 @@ namespace CS_Server_Viewer
             else
             {
                 SetStatus(StatusModel.ErrorBlacklistEmpty);
+            }
+        }
+        private void serverViewerDataGrid_CellFormating(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (this.serverViewerDataGrid.Columns[e.ColumnIndex].DataPropertyName == "Region")
+            {
+                if (e.Value != null)
+                {
+                    Regions region = (Regions)e.Value;
+
+                    e.Value = region.GetType().GetMember(e.Value.ToString()).First().GetCustomAttribute<DisplayAttribute>().Name;
+                }
             }
         }
     }

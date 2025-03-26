@@ -1,4 +1,6 @@
-﻿namespace CS_Server_Viewer
+﻿using System.Windows.Forms;
+
+namespace CS_Server_Viewer
 {
     partial class Form1
     {
@@ -95,6 +97,7 @@
             serverViewerDataGrid.RowHeadersVisible = false;
             serverViewerDataGrid.Size = new Size(557, 348);
             serverViewerDataGrid.TabIndex = 2;
+            serverViewerDataGrid.CellFormatting += serverViewerDataGrid_CellFormating;
             // 
             // dataGridViewTextBoxColumn5
             // 
