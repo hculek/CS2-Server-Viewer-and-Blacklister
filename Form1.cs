@@ -1,9 +1,7 @@
 using CS_Server_Viewer.Components;
 using CS_Server_Viewer.Models;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using System.Xml.Serialization;
 
 namespace CS_Server_Viewer
 {
@@ -17,6 +15,15 @@ namespace CS_Server_Viewer
             InitializeComponent();
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.Text = StatusModel.ProgramTitle;
+            infoLabel.Text = StatusModel.Author;
+            verLabel.Text = StatusModel.Licence;
+            infoUrlLabel.Text = StatusModel.GitUrl;
+            InitRegionsCheckedListBox();
+        }
+        #region Button Events
         private async void GetServerListBtn_Click(object sender, EventArgs e)
         {
             SetStatus(StatusModel.JobInProgress);
@@ -31,7 +38,9 @@ namespace CS_Server_Viewer
 
                 if (servers.Any())
                 {
-                    serverViewerDataGrid.DataSource = servers.OrderBy(c => c.Region).ToList(); ;
+                    serverViewerDataGrid.DataSource = servers.OrderBy(c => c.Region).ToList();
+
+                    EnableControls();
 
                     SetStatus(StatusModel.JobDone);
                 }
@@ -76,13 +85,36 @@ namespace CS_Server_Viewer
             {
                 SetStatus(string.Format(StatusModel.ErrorTemplate, ex.Message));
             }
-
-
         }
 
+        private void copyIpsBtn_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(blacklist.Item1))
+            {
+                Clipboard.SetText(blacklist.Item1);
+            }
+            else
+            {
+                SetStatus(StatusModel.ErrorBlacklistEmpty);
+            }
+        }
+        private void copyPortsBtn_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(blacklist.Item2))
+            {
+                Clipboard.SetText(blacklist.Item2);
+            }
+            else
+            {
+                SetStatus(StatusModel.ErrorBlacklistEmpty);
+            }
+        }
+        #endregion
+
+        #region serverViewer Events
         private void serverViewerDataGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (serverViewerDataGrid.Columns[e.ColumnIndex].DataPropertyName == "Blacklisted")
+            if (serverViewerDataGrid.Columns[e.ColumnIndex].Name == "BlacklistedColumn")
             {
                 bool value = (bool)serverViewerDataGrid[e.ColumnIndex, e.RowIndex].Value;
 
@@ -91,15 +123,61 @@ namespace CS_Server_Viewer
                 server.Blacklisted = value;
             }
         }
-
-        private void Form1_Load(object sender, EventArgs e)
+        private void serverViewerDataGrid_CellFormating(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            this.Text = StatusModel.ProgramTitle;
-            infoLabel.Text = StatusModel.Author;
-            verLabel.Text = StatusModel.Licence;
-            infoUrlLabel.Text = StatusModel.GitUrl;
+            if (this.serverViewerDataGrid.Columns[e.ColumnIndex].Name == "RegionColumn")
+            {
+                if (e.Value != null)
+                {
+                    RegionsEnum region = (RegionsEnum)e.Value;
+
+                    e.Value = region.GetType().GetMember(e.Value.ToString()).First().GetCustomAttribute<DisplayAttribute>().Name;
+                }
+            }
+        }
+        #endregion
+
+        #region CheckListBox Events
+        private void InitRegionsCheckedListBox() 
+        {
+            // Changes the selection mode from double-click to single click.
+            RegionsCheckedListBox.CheckOnClick = true;
+
+            var regions = Enum.GetNames(typeof(RegionsEnum)).ToList<string>();
+            regions.Add("Select All");
+
+            RegionsCheckedListBox.Items.AddRange(regions.ToArray());
         }
 
+        private void RegionsCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e) 
+        {
+            RegionsEnum regionValue = (RegionsEnum)e.Index;
+
+            int SelectAllIndex = RegionsCheckedListBox.Items.Count-1;
+
+            bool isChecked = e.NewValue == CheckState.Checked;
+
+            foreach (DataGridViewRow row in serverViewerDataGrid.Rows)
+            {
+                if (e.Index == SelectAllIndex)
+                {
+                    row.Cells["BlacklistedColumn"].Value = isChecked;
+
+                    for (int i = 0; i < RegionsCheckedListBox.Items.Count-1; i++)
+                    {
+                        RegionsCheckedListBox.SetItemChecked(i, isChecked);
+                    }
+                }
+                else if ((RegionsEnum)row.Cells["RegionColumn"].Value == regionValue)
+                {
+                    row.Cells["BlacklistedColumn"].Value = isChecked;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Helpers
         private void SetStatus(string status)
         {
             if (status.Contains(StatusModel.ErrorMsg))
@@ -114,40 +192,10 @@ namespace CS_Server_Viewer
             toolStripStatusLabel1.Text = status;
         }
 
-        private void copyIpsBtn_Click(object sender, EventArgs e)
+        private void EnableControls()
         {
-            if (!string.IsNullOrEmpty(blacklist.Item1))
-            {
-                Clipboard.SetText(blacklist.Item1);
-            }
-            else
-            {
-                SetStatus(StatusModel.ErrorBlacklistEmpty);
-            }
+            RegionsCheckedListBox.Enabled = true;
         }
-
-        private void copyPortsBtn_Click(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(blacklist.Item2))
-            {
-                Clipboard.SetText(blacklist.Item2);
-            }
-            else
-            {
-                SetStatus(StatusModel.ErrorBlacklistEmpty);
-            }
-        }
-        private void serverViewerDataGrid_CellFormating(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            if (this.serverViewerDataGrid.Columns[e.ColumnIndex].DataPropertyName == "Region")
-            {
-                if (e.Value != null)
-                {
-                    Regions region = (Regions)e.Value;
-
-                    e.Value = region.GetType().GetMember(e.Value.ToString()).First().GetCustomAttribute<DisplayAttribute>().Name;
-                }
-            }
-        }
+        #endregion
     }
 }
