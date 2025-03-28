@@ -5,7 +5,7 @@
         public static readonly string Author = "Made by hculek";
         public static readonly string Licence = "Licence: MIT";
         public static readonly string GitUrl = "https://github.com/hculek";
-        public static readonly string Version = "1.0";
+        public static readonly string Version = "1.1";
         public static readonly string ProgramTitle = $"CS2 Server Viewer & Blacklisting. Version {Version}";
 
         public static readonly string JobInProgress = "Working...";
