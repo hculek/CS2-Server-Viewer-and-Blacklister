@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CS_Server_Viewer.Models
+﻿namespace CS_Server_Viewer.Models
 {
     public class RegionModel
     {
         public List<(double latitude, double longitude)> Polygon { get; set; } = new List<(double latitude, double longitude)>();
-        public Regions Region { get; set; }
+        public RegionsEnum Region { get; set; }
 
         public RegionModel()
         {
@@ -27,7 +20,7 @@ namespace CS_Server_Viewer.Models
 
             #region Europe
             regions.Add(new RegionModel {
-                Region = Regions.Europe,
+                Region = RegionsEnum.Europe,
                 Polygon = new List<(double latitude, double longitude)>
                 {
                     (36.1023764,-18.984375),
@@ -42,7 +35,7 @@ namespace CS_Server_Viewer.Models
             #region North America
             regions.Add(new RegionModel {
                 
-                Region = Regions.NorthAmerica,
+                Region = RegionsEnum.NorthAmerica,
                 Polygon = new List<(double latitude, double longitude)>
                 {
                     (75.6721974,-166.2890625),
@@ -57,7 +50,7 @@ namespace CS_Server_Viewer.Models
             #region South America
             regions.Add(new RegionModel
             {
-                Region = Regions.SouthAmerica,
+                Region = RegionsEnum.SouthAmerica,
                 Polygon = new List<(double latitude, double longitude)>
                 {
                     (-50.9584267,-26.0156250),
@@ -72,7 +65,7 @@ namespace CS_Server_Viewer.Models
             #region Asia
             regions.Add(new RegionModel
             {
-                Region = Regions.Asia,
+                Region = RegionsEnum.Asia,
                 Polygon = new List<(double latitude, double longitude)>
                 {
                     (33.1375512,25.6640625),
@@ -91,7 +84,7 @@ namespace CS_Server_Viewer.Models
             #region Australia
             regions.Add(new RegionModel
             {
-                Region = Regions.Australia,
+                Region = RegionsEnum.Australia,
                 Polygon = new List<(double latitude, double longitude)>
                 {
                     (0.8788718,84.5507813),
@@ -106,7 +99,7 @@ namespace CS_Server_Viewer.Models
             #region Africa
             regions.Add(new RegionModel
             {
-                Region = Regions.Africa,
+                Region = RegionsEnum.Africa,
                 Polygon = new List<(double latitude, double longitude)>
                 {
                     (35.1019341,-10.1953125),

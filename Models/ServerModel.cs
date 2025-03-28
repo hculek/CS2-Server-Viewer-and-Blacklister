@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CS_Server_Viewer.Models
 {
@@ -11,11 +7,9 @@ namespace CS_Server_Viewer.Models
         public int Id { get; set; }
         public string Desc { get; set; }
         public GeographicCoordinates GeoCoordinates { get; set; } = new GeographicCoordinates();
-        public Regions Region { get; set; } = Regions.World; //TODO
+        public RegionsEnum Region { get; set; } = RegionsEnum.World; //fallback if region not recognized
         public List<Relay> Relays { get; set; } = new List<Relay>();
         public bool Blacklisted { get; set; }
-
-
     }
 
     public class Relay 
@@ -32,15 +26,21 @@ namespace CS_Server_Viewer.Models
 
 
 
-    public enum Regions 
-    { 
-        None = 0,
-        World = 1,
-        Europe = 2,
-        NorthAmerica = 3,
-        SouthAmerica = 4,
-        Asia = 5,
-        Australia = 6,
-        Africa = 7
+    public enum RegionsEnum 
+    {
+        [Display(Name = "World")]
+        World = 0,
+        [Display(Name = "Europe")]
+        Europe = 1,
+        [Display(Name = "North America")]
+        NorthAmerica = 2,
+        [Display(Name = "South America")]
+        SouthAmerica = 3,
+        [Display(Name = "Asia")]
+        Asia = 4,
+        [Display(Name = "Australia")]
+        Australia = 5,
+        [Display(Name = "Africa")]
+        Africa = 6
     }
 }
